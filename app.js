@@ -1,13 +1,13 @@
-import express from 'express';
+import express from "express";
 
 const courseGoals = [];
 
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public'));
+app.use(express.static("public"));
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(`
   <!DOCTYPE html>
   <html lang="en">
@@ -22,7 +22,21 @@ app.get('/', (req, res) => {
       <main>
         <h1>Manage your course goals</h1>
         <section>
-          <form id="goal-form">
+          <!-- 
+          <form 
+            id="goal-form" 
+            hx-post="/goal-form" 
+            hx-select="#goals" 
+            hx-target="#goals"
+            hx-swap="outerHTML"
+          > 
+          -->
+          <form 
+            id="goal-form" 
+            hx-post="/goal-form" 
+            hx-target="#goals" 
+            hx-swap="beforeend"
+          >
             <div>
               <label htmlFor="goal">Goal</label>
               <input type="text" id="goal" name="goal" />
@@ -38,13 +52,27 @@ app.get('/', (req, res) => {
               <span>${goal}</span>
               <button>Remove</button>
             </li>
-          `
+          `,
           )}
           </ul>
         </section>
       </main>
     </body>
   </html>
+  `);
+});
+
+app.post("/goal-form", (req, res) => {
+  // console.log(req);
+  console.log(res);
+  const enteredGoal = req.body.goal;
+  courseGoals.push(enteredGoal);
+  // res.redirect("/");
+  res.send(`
+    <li id="goal-${courseGoals.length - 1}">
+    <span>${enteredGoal}</span>
+    <button>Remove</button>
+    </li>
   `);
 });
 
